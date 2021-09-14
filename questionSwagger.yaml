@@ -1,0 +1,341 @@
+
+swagger: "2.0.0"
+info:
+  version: "1.0.0" 
+  title: "My blog project"
+  description: "My Blog Project API"
+  license:
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
+host: "localhost:8089"
+basePath: "/questions"
+schemes: 
+  - "http"
+  - "https"
+consumes: 
+  - "application/json"
+  - "application/xml"
+produces: 
+  - "application/json"
+tags:
+  - name: "questions"
+    description: "Everything About Questions"
+  - name: "answers"
+    description: "Everything About Answers"
+paths:
+    /{question_id}:
+      get:
+        tags:
+          - "questions"
+        summary: "Get a Question from Question Id"
+        parameters:
+            - name: "question_id"
+              in: "path"
+              required: true
+              type: "integer"
+              format: "int64"
+              description: "Question ID to Consider"
+        responses:
+          "200":
+            description: "OK"
+            schema:
+              $ref: "#/definitions/question"
+    /:
+      get:
+        tags:
+          - "questions"
+        summary: "Get All Questions"
+        responses :
+          "200":
+            description: "OK"
+            schema:
+              type: "array"
+              items:
+                $ref: "#/definitions/question"
+    
+    /add:
+      post:
+        tags:
+          - "questions"
+        summary: "Create a New Question"
+        parameters:
+            - name: "x-access-token"
+              in: "header"
+              type: "string"
+              required: true
+              description: "User Validation Token"
+            - name: "body"
+              in: "body"
+              required: true
+              description: "Question Body"
+              schema:
+                type: "object"
+                required:
+                  - "Title"
+                  - "Body"
+                properties:
+                  Title:
+                    type: "string"
+                  Body:
+                    type: "string"
+                  Tags:
+                    type: "array"
+                    items:
+                      type: "string"
+        responses:
+          "200":
+            description: "OK"
+            schema:
+              $ref: "#/definitions/question"
+    
+    /{question_id}/{vote}:
+      get:
+        tags:
+          - "questions"
+        summary: "Upvote or Downvote a Question"
+        parameters:
+            - name: "x-access-token"
+              in: "header"
+              type: "string"
+              required: true
+              description: "User Validation Token"
+            - name: "question_id"
+              in: "path"
+              required: true
+              type: "integer"
+              format: "int64"
+              description: "Question ID to Consider"
+            - name: "vote"
+              in: "path"
+              required: true
+              schema:
+                type: "string"
+                enum: ["upvote","downvote"]
+              description: "Upvote or Downvote"
+        responses:
+          "200":
+            description: "OK"
+            schema:
+              $ref: "#/definitions/question"
+    
+    /{question_id}/delete:
+      post:
+        tags:
+          - "questions"
+        summary: "Delete A Question"
+        parameters:
+            - name: "x-access-token"
+              in: "header"
+              type: "string"
+              required: true
+              description: "User Validation Token"
+            - name: "question_id"
+              in: "path"
+              required: true
+              type: "integer"
+              format: "int64"
+              description: "Question ID to Consider"
+        responses:
+          "200":
+            description: "OK"
+            schema:
+              $ref: "#/definitions/question"
+    
+    /{question_id}/edit:
+      post:
+        tags:
+          - "questions"
+        summary: "Edit a Question"
+        parameters:
+            - name: "x-access-token"
+              in: "header"
+              type: "string"
+              required: true
+              description: "User Validation Token"
+            - name: "question_id"
+              in: "path"
+              required: true
+              type: "integer"
+              format: "int64"
+              description: "Question ID to Consider"
+            - name: "body"
+              in: "body"
+              required: true
+              description: "Question Updated Fields"
+              schema:
+                $ref: "#/definitions/newQuestion"
+        responses:
+          "200":
+            description: "OK"
+            schema:
+              $ref: "#/definitions/question"
+    
+    /{question_id}/answers:
+      post:
+        tags:
+          - "questions"
+        summary: "Get All Answers for a Question"
+        parameters:
+            - name: "question_id"
+              in: "path"
+              required: true
+              type: "integer"
+              format: "int64"
+              description: "Question ID to Consider"
+        responses:
+          "200":
+            description: "OK"
+            schema:
+              $ref: "#/definitions/answer"
+
+    /{question_id}/answers/add:
+      post:
+        tags:
+          - "questions"
+        summary: "Create New Answer for a Question"
+        parameters:
+            - name: "x-access-token"
+              in: "header"
+              type: "string"
+              required: true
+              description: "User Validation Token"
+            - name: "question_id"
+              in: "path"
+              required: true
+              type: "integer"
+              format: "int64"
+              description: "Question ID to Consider"
+            - name: "body"
+              in: "body"
+              required: true
+              schema:
+                type: "object"
+                required:
+                  - "Body"
+                properties:
+                  Body:
+                    type: "string"
+        responses:
+          "200":
+            description: "OK"
+            schema:
+              $ref: "#/definitions/answer"
+    
+    /{question_id}/close:
+      post:
+        tags:
+          - "questions"
+        summary: "Close a Question"
+        parameters:
+            - name: "x-access-token"
+              in: "header"
+              type: "string"
+              required: true
+              description: "User Validation Token"
+            - name: "question_id"
+              in: "path"
+              required: true
+              type: "integer"
+              format: "int64"
+              description: "Question ID to Consider"
+        responses:
+          "200":
+            description: "OK"
+            schema:
+              $ref: "#/definitions/question"
+
+    /{question_id}/reopen:
+      post:
+        tags:
+          - "questions"
+        summary: "ReOpen a Question"
+        parameters:
+            - name: "x-access-token"
+              in: "header"
+              type: "string"
+              required: true
+              description: "User Validation Token"
+            - name: "question_id"
+              in: "path"
+              required: true
+              type: "integer"
+              format: "int64"
+              description: "Question ID to Consider"
+        responses:
+          "200":
+            description: "OK"
+            schema:
+              $ref: "#/definitions/question"
+
+    
+definitions:
+  question:
+    type: "object"
+    required:
+      - "Id"
+      - "PostTypeId"
+      - "AcceptedAnswerId"
+      - "CreationDate"
+      - "Score"
+      - "ViewCount"
+      - "OwnerUserId"
+      - "Title"
+      - "Body"
+      - "Tags"
+      - "ClosedDate"
+    properties:
+        Id:
+          type: "integer"
+        PostTypeId:
+          type: "integer"
+        AcceptedAnswerId:
+          type: "integer"
+        CreationDate:
+          type: "integer"
+        Score:
+          type: "integer"
+        ViewCount:
+          type: "integer"
+        OwnerUserId:
+          type: "integer"
+        Title:
+          type: "string"
+        Body:
+          type: "string"
+        Tags:
+          type: "array"
+          items:
+            type: "string"
+        ClosedDate:
+          type: "integer"
+      
+  answer:
+    type: "object"
+    required:
+      - "Id"
+      - "PostTypeId"
+      - "CreationDate"
+      - "Score"
+      - "ViewCount"
+      - "OwnerUserId"
+      - "Body"
+      - "Tags"
+    properties:
+        Id:
+          type: "integer"
+        PostTypeId:
+          type: "integer"
+        CreationDate:
+          type: "integer"
+        Score:
+          type: "integer"
+        ViewCount:
+          type: "integer"
+        OwnerUserId:
+          type: "integer"
+        Body:
+          type: "string"
+        Tags:
+          type: "array"
+          items:
+            type: "string"        

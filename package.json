@@ -1,0 +1,64 @@
+{
+  "name": "skillenhance",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "sonar":  "node sonar-project.js",
+    "test": "jest  --coverage --testTimeout=100000 --runInBand --forceExit",
+    "question_service": "node question_service",
+    "answer_service": "node ./services/answer_service",
+    "comment_service": "node ./services/comment_service",
+    "user_service": "node ./services/user_service",
+    "dashboard_service": "node ./services/dashboard_service",
+    "notification_service": "node ./services/notification_service",
+    "start": "concurrently \"npm run question_service\" \"npm run answer_service\" \"npm run comment_service\" \"npm run dashboard_service\" \"npm run notification_service\" \"npm run user_service\"",
+    "dev": "start npm run question_service && start npm run answer_service && start npm run comment_service && start npm run dashboard && start npm run notifications",
+    "kube": "kubectl port-forward service/skillfins 8089:8089 8088:8088 8075:8075 5050:5050 8083:8083 3300:3300"
+  },
+  "jest": {
+    "testEnvironment":  "node",
+    "coveragePathIgnorePatterns": [
+        "/node_modules/"
+    ],
+    "testResultsProcessor":  "jest-sonar-reporter",
+    "collectCoverage": true
+  },
+  "jestSonar": {
+    "reportPath":  "coverage",
+    "reportFile":  "test-reporter.xml",
+    "indent":  4
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "-": "0.0.1",
+    "cli": "^1.0.1",
+    "concurrently": "^6.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "jade": "^1.11.0",
+    "jest": "^27.1.1",
+    "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.1.0",
+    "node-fetch": "^2.6.1",
+    "nodemon": "^2.0.12",
+    "path": "^0.12.7",
+    "request": "^2.88.2",
+    "save": "^2.4.0",
+    "shellsubstitute": "^1.2.0",
+    "swagger-ui-express": "^4.1.6"
+  },
+  "devDependencies": {
+    "@shelf/jest-mongodb": "^2.0.3",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.32.0",
+    "eslint-plugin-sonarjs": "^0.10.0",
+    "jest-sonar-reporter": "^2.0.0",
+    "sonarqube-scanner": "^2.8.1",
+    "supertest": "^6.1.6"
+  }
+}
