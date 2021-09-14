@@ -1,0 +1,318 @@
+swagger: "2.0.0"
+info:
+  version: "1.0.0" 
+  title: "My blog project"
+  description: "My Blog Project API"
+  license:
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
+host: "localhost:3300"
+basePath: "/"
+schemes: 
+  - "http"
+  - "https"
+consumes: 
+  - "application/json"
+  - "application/xml"
+produces: 
+  - "application/json"
+tags:
+  - name: "dashboard"
+    description: "Everything About Dashboard"
+paths:
+  /mainpage2:
+    get:
+      tags:
+        - "dashboard"
+      summary: "Get All Posts"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              questions:
+                $ref: "#/definitions/question"
+              answers:
+                $ref: "#/definitions/answer"
+    
+  /searchstring:
+    post:
+      tags:
+        - "dashboard"
+      summary: "Search for a Post(String Matching)"
+      parameters:
+        - name: "body"
+          in: "body"
+          required: true
+          description: "String to Search"
+          schema:
+            type: "object"
+            required:
+              - "search_string"
+            properties:
+              search_string:
+                type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              questions:
+                $ref: "#/definitions/question"
+              answers:
+                $ref: "#definitions/answer"
+    
+  /searchpost/{search_string}:
+    get:
+      tags:
+        - "dashboard"
+      summary: "Search for a Post(MongoDB Text Search)"
+      parameters:
+        - name: "search_string"
+          in: "path"
+          required: true
+          description: "String to Search"
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              questions:
+                $ref: "#/definitions/question"
+              answers:
+                $ref: "#/definitions/answer"
+    
+  /suggested:
+    post:
+      tags:
+        - "dashboard"
+      summary: "Get Suggested Posts for a Question"
+      parameters:
+        - name: "body"
+          in: "body"
+          required: true
+          description: "Question Fields to Base Searching On"
+          schema:
+            type: "object"
+            required:
+              - "Title"
+              - "Body"
+            properties:
+              Title:
+                type: "string"
+              Body:
+                type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              type: "#/definitions/question"
+    
+  /searchTags/{tag}:
+    get:
+      tags:
+        - "dashboard"
+      summary: "Search for a Single or Multiple Tags"
+      parameters:
+        - name: "tag"
+          in: "path"
+          required: true
+          description: "Tags to Search"
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              questions:
+                $ref: "#/definitions/question"
+    
+  /{posts}/sort/{base}/{type}:
+    get:
+      tags:
+        - "dashboard"
+      summary: "Sort the Posts"
+      parameters:
+        - name: "posts"
+          in: "path"
+          required: true
+          description: "Type of Posts to Sort"
+          type: "string"
+        - name: "base"
+          in: "path"
+          required: true
+          description: "Basis for Posts to Sort"
+          type: "string"
+        - name: "type"
+          in: "path"
+          required: true
+          description: "Type of Sort"
+          schema:
+            type: "string"
+            enum: ["asc","desc"]
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            oneOf:
+              - $ref: "#/definitions/question"
+              - $ref: "#definitions/answer"
+    
+  /trending:
+    get:
+      tags:
+        - "dashboard"
+      summary: "Trending Posts"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/question"
+  
+  /searchcusts:
+    post:
+      tags:
+        - "dashboard"
+      summary: "Search for a User"
+      parameters:
+        - name: "body"
+          in: "body"
+          required: true
+          description: "Username to Search"
+          schema:
+            type: "object"
+            required:
+              - "search_name"
+            properties:
+              search_name:
+                type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/user"
+
+definitions:
+  answer:
+    type: "object"
+    required:
+      - "Id"
+      - "PostTypeId"
+      - "CreationDate"
+      - "Score"
+      - "ViewCount"
+      - "OwnerUserId"
+      - "Body"
+      - "Tags"
+    properties:
+        Id:
+          type: "integer"
+        PostTypeId:
+          type: "integer"
+        CreationDate:
+          type: "integer"
+        Score:
+          type: "integer"
+        ViewCount:
+          type: "integer"
+        OwnerUserId:
+          type: "integer"
+        Body:
+          type: "string"
+        Tags:
+          type: "array"
+          items:
+            type: "string"
+  
+  question:
+    type: "object"
+    required:
+      - "Id"
+      - "PostTypeId"
+      - "AcceptedAnswerId"
+      - "CreationDate"
+      - "Score"
+      - "ViewCount"
+      - "OwnerUserId"
+      - "Title"
+      - "Body"
+      - "Tags"
+      - "ClosedDate"
+    properties:
+        Id:
+          type: "integer"
+        PostTypeId:
+          type: "integer"
+        AcceptedAnswerId:
+          type: "integer"
+        CreationDate:
+          type: "integer"
+        Score:
+          type: "integer"
+        ViewCount:
+          type: "integer"
+        OwnerUserId:
+          type: "integer"
+        Title:
+          type: "string"
+        Body:
+          type: "string"
+        Tags:
+          type: "array"
+          items:
+            type: "string"
+        ClosedDate:
+          type: "integer"
+  
+  user:
+    type: "object"
+    required:
+      - "Id"
+      - "creationDate"
+      - "gender"
+      - "grade"
+      - "SocialLink"
+      - "username"
+      - "displayName"
+      - "firstName"
+      - "lastName"
+      - "image"
+      - "token"
+      - "LastLogin"
+    properties:
+      Id:
+        type: "string"
+      creationDate:
+        type: "string"
+      gender:
+        type: "string"
+      grade:
+        type: "integer"
+      SocialLink:
+        type: "string"
+      username:
+        type: "string"
+      displayName:
+        type: "string"
+      firstName:
+        type: "string"
+      lastNamee:
+        type: "string"
+      image:
+        type: "string"
+      token:
+        type: "string"
+      LastLogin:
+        type: "string"
+
