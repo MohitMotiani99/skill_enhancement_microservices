@@ -1,0 +1,33 @@
+version: '3.9'
+services:
+  questions:
+    build: ./modules/questions
+    ports:
+      - 8089:8089
+    command: npm install
+    command: npm run question_service
+  answers:
+    build: ./modules/answers
+    ports:
+      - 8088:8088
+    command: npm run answer_service
+  comments:
+    build: ./modules/comments
+    ports:
+      - 8075:8075
+    command: npm run comment_service
+  notifications:
+    build: ./modules/notifications
+    ports:
+      - 8083:8083
+    command: npm run notification_service
+  dashboard:
+    build: ./modules/dashboard
+    ports:
+      - 3300:3300
+    command: npm run dashboard_service
+  users:
+    build: ./modules/users
+    ports:
+      - 5050:5050
+    command: npm run user_service
