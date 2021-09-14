@@ -1,0 +1,252 @@
+swagger: "2.0.0"
+info:
+  version: "1.0.0" 
+  title: "My blog project"
+  description: "My Blog Project API"
+  license:
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
+host: "localhost:8075"
+basePath: "/"
+schemes: 
+  - "http"
+  - "https"
+consumes: 
+  - "application/json"
+  - "application/xml"
+produces: 
+  - "application/json"
+tags:
+  - name: "comments"
+    description: "Everything About Comments"
+paths:
+  /comments/{id}:
+    get:
+      tags:
+        - "comments"
+      summary: "Get a Particular Comment"
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/comment"
+  
+  /questions/{id}/comments/add:
+    post:
+      tags:
+        - "comments"
+      summary: "Add a new Comment for a Particular Question"
+      parameters:
+        - $ref: "#/components/parameters/token"
+        - name: "id"
+          in: "path"
+          type: "integer"
+          required: true
+          description: "Question ID to Consider"
+        - name: "body"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - "body"
+            properties:
+              body:
+                type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/comment"
+
+  /answers/{id}/comments/add:
+    post:
+      tags:
+        - "comments"
+      summary: "Add a new Comment for a Particular Answer"
+      parameters:
+        - $ref: "#/components/parameters/token"
+        - name: "id"
+          in: "path"
+          type: "integer"
+          required: true
+          description: "Answer ID to Consider"
+        - name: "body"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - "body"
+            properties:
+              body:
+                type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/comment"
+    
+  
+  /comments/{id}/edit:
+    patch:
+      tags:
+        - "comments"
+      summary: "Edit a Particular Comment"
+      parameters:
+        - $ref: "#/components/parameters/token"
+        - $ref: "#/components/parameters/id"
+        - name: "body"
+          in: "body"
+          required: true
+          description: "New Body for the Comment"
+          schema:
+            type: "object"
+            required:
+              - "body"
+            properties:
+              body:
+                type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "string"
+  
+  /comments/{id}/delete:
+    delete:
+      tags:
+        - "comments"
+      summary: "Delete a Particular Comment"
+      parameters:
+        - $ref: "#/components/parameters/token"
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "string"
+    
+  /comments/{id}/{vote}:
+    patch:
+      tags:
+        - "comments"
+      summary: "Vote a Particular Comment"
+      parameters:
+        - $ref: "#/components/parameters/token"
+        - $ref: "#/components/parameters/id"
+        - name: "vote"
+          in: "path"
+          schema:
+            type: "string"
+            enum: ["upvote","downvote"]
+          description: "Upvote or Downvote" 
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "string"
+  
+  /users/{id}/comments:
+    get:
+      tags:
+        - "comments"
+      summary: "Comments of a User"
+      parameters:
+        - $ref: "#/components/parameters/token"
+        - name: "id"
+          in: "path"
+          description: "User ID to Consider"
+          type: "integer"
+
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/comment"
+  
+  /questions/{id}/comments:
+    get:
+      tags:
+        - "comments"
+      summary: "Get All Comments for a Particular Question"
+      parameters:
+        - name: "id"
+          in: "path"
+          type: "integer"
+          required: true
+          description: "Question ID to Consider"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/comment"
+
+  /answers/{id}/comments:
+    get:
+      tags:
+        - "comments"
+      summary: "Get All Comments for a Particular Answer"
+      parameters:
+        - name: "id"
+          in: "path"
+          type: "integer"
+          required: true
+          description: "Answer ID to Consider"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/comment"
+
+
+  
+
+components:
+  parameters:
+    id:
+      name: "id"
+      in: "path"
+      type: "integer"
+      required: true
+      description: "Comment ID to Consider"
+    token:
+      name: "x-access-token"
+      in: "header"
+      type: "string"
+      required: true
+      description: "User Validation Token"
+    
+
+definitions:
+  comment:
+    type: "object"
+    required:
+      - "Id"
+      - "PostId"
+      - "Score"
+      - "Text"
+      - "CreationDate"
+      - "UserDisplayName"
+      - "UserId"
+    properties:
+      Id:
+        type: "integer"
+      PostId:
+        type: "integer"
+      Score:
+        type: "integer"
+      Text:
+        type: "string"
+      CreationDate:
+        type: "integer"
+      UserDisplayName:
+        type: "string"
+      UserId:
+        type: "integer"
