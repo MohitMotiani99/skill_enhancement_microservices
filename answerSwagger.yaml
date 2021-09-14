@@ -1,0 +1,212 @@
+swagger: 2.0.0
+info:
+  version: 1.0.0
+  title: My blog project
+  description: My Blog Project API
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+host: localhost:8088
+basePath: /answers
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+  - application/xml
+produces:
+  - application/json
+tags:
+  - name: answers
+    description: Everything About Answers
+paths:
+  /{answer_id}:
+    get:
+      tags:
+        - answers
+      summary: Get a answer from Answer Id
+      parameters:
+        - '': '#/components/parameters/answer_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            '': '#/definitions/answer'
+  /{answer_id}/accept:
+    post:
+      tags:
+        - answers
+      summary: Mark an Answer as the best Answer for a Question
+      parameters:
+        - '': '#/components/parameters/token'
+        - '': '#/components/parameters/answer_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            '': '#/definitions/answer'
+  /{answer_id}/accept/undo:
+    post:
+      tags:
+        - answers
+      summary: Undo the Accepted Mark for an Answer
+      parameters:
+        - '': '#/components/parameters/token'
+        - '': '#/components/parameters/answer_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            '': '#/definitions/answer'
+  /{answer_id}/delete:
+    post:
+      tags:
+        - answers
+      summary: Delete an Answer
+      parameters:
+        - '': '#/components/parameters/token'
+        - '': '#/components/parameters/answer_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            '': '#/definitions/question'
+  /{answer_id}/edit:
+    post:
+      tags:
+        - answers
+      summary: Edit an Answer
+      parameters:
+        - '': '#/components/parameters/token'
+        - '': '#/components/parameters/answer_id'
+        - name: body
+          in: body
+          discription: Updated Fields for Answer
+          schema:
+            type: object
+            required:
+              - Body
+            properties:
+              Body:
+                type: string
+              Tags:
+                type: array
+                items:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            '': '#/definitions/answer'
+  /{answer_id}/{vote}:
+    get:
+      tags:
+        - answers
+      summary: Upvote or Downvote an Answer
+      parameters:
+        - '': '#/components/parameters/token'
+        - '': '#/components/parameters/answer_id'
+        - name: vote
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - upvote
+              - downvote
+          description: Upvote or Downvote
+      responses:
+        '200':
+          description: OK
+          schema:
+            '': '#/definitions/answer'
+components:
+  parameters:
+    token:
+      name: x-access-token
+      in: header
+      type: string
+      required: true
+      description: User Validation Token
+    answer_id:
+      name: answer_id
+      in: path
+      type: integer
+      required: true
+      description: Answer Id to Consider
+    question_id:
+      name: question_id
+      in: path
+      type: integer
+      required: true
+      description: Question Id to Consider
+definitions:
+  answer:
+    type: object
+    required:
+      - Id
+      - PostTypeId
+      - CreationDate
+      - Score
+      - ViewCount
+      - OwnerUserId
+      - Body
+      - Tags
+    properties:
+      Id:
+        type: integer
+      PostTypeId:
+        type: integer
+      CreationDate:
+        type: integer
+      Score:
+        type: integer
+      ViewCount:
+        type: integer
+      OwnerUserId:
+        type: integer
+      Body:
+        type: string
+      Tags:
+        type: array
+        items:
+          type: string
+  question:
+    type: object
+    required:
+      - Id
+      - PostTypeId
+      - AcceptedAnswerId
+      - CreationDate
+      - Score
+      - ViewCount
+      - OwnerUserId
+      - Title
+      - Body
+      - Tags
+      - ClosedDate
+    properties:
+      Id:
+        type: integer
+      PostTypeId:
+        type: integer
+      AcceptedAnswerId:
+        type: integer
+      CreationDate:
+        type: integer
+      Score:
+        type: integer
+      ViewCount:
+        type: integer
+      OwnerUserId:
+        type: integer
+      Title:
+        type: string
+      Body:
+        type: string
+      Tags:
+        type: array
+        items:
+          type: string
+      ClosedDate:
+        type: integer
