@@ -1,0 +1,135 @@
+swagger: "2.0.0"
+info:
+  version: "1.0.0" 
+  title: "My blog project"
+  description: "My Blog Project API"
+  license:
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
+host: "localhost:8083"
+basePath: "/User"
+schemes: 
+  - "http"
+  - "https"
+consumes: 
+  - "application/json"
+  - "application/xml"
+produces: 
+  - "application/json"
+tags:
+  - name: "notifications"
+    description: "Everything About Notifications"
+paths:
+    /{User_Id}/notifs:
+      get:
+        tags:
+          - "notifications"
+        summary: "Get Unread Notifications for a User"
+        parameters:
+          - $ref: "#/components/parameters/token"
+          - $ref: "#/components/parameters/User_Id"
+        responses:
+          "200":
+            description: "OK"
+            schema:
+              $ref: "#/definitions/notification"
+
+    /{User_Id}/{noti_id}/read:
+      get:
+        tags:
+          - "notifications"
+        summary: "Read a Particular Notification for a User"
+        parameters:
+          - $ref: "#/components/parameters/token"
+          - $ref: "#/components/parameters/User_Id"
+          - $ref: "#/components/parameters/noti_id"
+        responses:
+          "200":
+            description: "OK"
+            schema:
+              $ref: "#/definitions/notification"
+    
+    /{User_Id}/readAll:
+      get:
+        tags:
+          - "notifications"
+        summary: "Read All Unread Notifications for a User"
+        parameters:
+          - $ref: "#/components/parameters/token"
+          - $ref: "#/components/parameters/User_Id"
+        responses:
+          "200":
+            description: "OK"
+            schema:
+              type: "string"
+
+    /{User_Id}/push:
+      post:
+        tags:
+          - "notifications"
+        summary: "Push a New Notification for a User"
+        parameters:
+          - $ref: "#/components/parameters/token"
+          - $ref: "#/components/parameters/User_Id"
+          - name: "body"
+            in: "body"
+            required: true
+            description: "Notification Body"
+            schema:
+              type: "object"
+              required:
+                - "PostId"
+                - "Body"
+              properties:
+                PostId:
+                  type: "integer"
+                Body:
+                  type: "string"
+        responses:
+          "200":
+            description: "OK"
+            schema:
+              type: "string"
+components:
+  parameters:
+    token:
+      name: "x-access-token"
+      in: "header"
+      type: "string"
+      required: true
+      description: "User Validation Token"
+    User_Id:
+      name: "User_Id"
+      in: "path"
+      type: "integer"
+      required: true
+      description: "User Id to Consider"
+    noti_id:
+      name: "noti_id"
+      in: "path"
+      type: "integer"
+      required: true
+      description: "Notification Id to Consider"
+
+definitions:
+  notification:
+    type: "object"
+    required:
+      - "Id"
+      - "PostId"
+      - "UserId"
+      - "Body"
+      - "Status"
+    properties:
+      Id:
+        type: "integer"
+      PostId:
+        type: "integer"
+      UserId:
+        type: "integer"
+      Body:
+        type: "string"
+      Status:
+        type: "string"
+        enum: ["unread","read"]
+
