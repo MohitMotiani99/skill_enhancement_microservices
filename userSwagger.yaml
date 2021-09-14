@@ -1,0 +1,323 @@
+swagger: "2.0.0"
+info:
+  version: "1.0.0" 
+  title: "My blog project"
+  description: "My Blog Project API"
+  license:
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
+host: "localhost:5050"
+basePath: "/users"
+schemes: 
+  - "http"
+  - "https"
+consumes: 
+  - "application/json"
+  - "application/xml"
+produces: 
+  - "application/json"
+tags:
+  - name: "users"
+    description: "Everything About Users"
+paths:
+  /{user_id}:
+    get:
+      tags:
+        - "users"
+      summary: "Get a User from a ID"
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/user"
+
+  /{user_id}/editprofile:
+    patch:
+      tags:
+        - "users"
+      summary: "Edit User Profile"
+      parameters:
+        - $ref: "#/components/parameters/token"
+        - $ref: "#/components/parameters/user_id"
+        - name: "body"
+          in: "body"
+          description: "Updated Fields"
+          schema:
+            type: "object"
+            required:
+              - "gender"
+              - "SocialLink"
+            properties:
+              gender:
+                type: "string"
+                enum: ["Male","Female"]
+              SocialLink:
+                type: "string"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/user"
+        "403":
+          description: "Forbidden"
+
+  /{user_id}/delete:
+    delete:
+      tags:
+        - "users"
+      summary: "Delete User Profile"
+      parameters:
+        - $ref: "#/components/parameters/token"
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "string"
+        "403":
+          description: "Forbidden"
+
+
+  /{user_id}/questions:
+    get:
+      tags:
+        - "users"
+      summary: "Get All Questions Posted by a User"
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/question"
+    
+  /{user_id}/comments:
+    get:
+      tags:
+        - "users"
+      summary: "Get All Comments Posted by a User"
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/comment"
+    
+  /{user_id}/answers:
+    get:
+      tags:
+        - "users"
+      summary: "Get All Answers Posted by a User"
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/answer"  
+
+  /{user_id}/totalquestions:
+    get:
+      tags:
+        - "users"
+      summary: "Get Number of Questions Posted by a User"
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "string"
+
+  /{user_id}/totalanswers:
+    get:
+      tags:
+        - "users"
+      summary: "Get Number of Answers Posted by a User"
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "string"
+  
+  /{user_id}/totalcomments:
+    get:
+      tags:
+        - "users"
+      summary: "Get Number of Comments Posted by a User"
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "string"
+
+  /:
+    get:
+      tags:
+        - "users"
+      summary: "Get All Users"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/user"
+
+components:
+  parameters:
+    token:
+      name: "x-access-token"
+      in: "header"
+      type: "string"
+      required: true
+      description: "User Validation Token"
+    user_id:
+      name: "user_id"
+      in: "path"
+      type: "string"
+      description: "User ID to Consider"
+
+definitions:
+  comment:
+    type: "object"
+    required:
+      - "Id"
+      - "PostId"
+      - "Score"
+      - "Text"
+      - "CreationDate"
+      - "UserDisplayName"
+      - "UserId"
+    properties:
+      Id:
+        type: "integer"
+      PostId:
+        type: "integer"
+      Score:
+        type: "integer"
+      Text:
+        type: "string"
+      CreationDate:
+        type: "integer"
+      UserDisplayName:
+        type: "string"
+      UserId:
+        type: "integer"
+  answer:
+    type: "object"
+    required:
+      - "Id"
+      - "PostTypeId"
+      - "CreationDate"
+      - "Score"
+      - "ViewCount"
+      - "OwnerUserId"
+      - "Body"
+      - "Tags"
+    properties:
+        Id:
+          type: "integer"
+        PostTypeId:
+          type: "integer"
+        CreationDate:
+          type: "integer"
+        Score:
+          type: "integer"
+        ViewCount:
+          type: "integer"
+        OwnerUserId:
+          type: "integer"
+        Body:
+          type: "string"
+        Tags:
+          type: "array"
+          items:
+            type: "string"
+  
+  question:
+    type: "object"
+    required:
+      - "Id"
+      - "PostTypeId"
+      - "AcceptedAnswerId"
+      - "CreationDate"
+      - "Score"
+      - "ViewCount"
+      - "OwnerUserId"
+      - "Title"
+      - "Body"
+      - "Tags"
+      - "ClosedDate"
+    properties:
+        Id:
+          type: "integer"
+        PostTypeId:
+          type: "integer"
+        AcceptedAnswerId:
+          type: "integer"
+        CreationDate:
+          type: "integer"
+        Score:
+          type: "integer"
+        ViewCount:
+          type: "integer"
+        OwnerUserId:
+          type: "integer"
+        Title:
+          type: "string"
+        Body:
+          type: "string"
+        Tags:
+          type: "array"
+          items:
+            type: "string"
+        ClosedDate:
+          type: "integer"
+
+  user:
+    type: "object"
+    required:
+      - "Id"
+      - "creationDate"
+      - "gender"
+      - "grade"
+      - "SocialLink"
+      - "username"
+      - "displayName"
+      - "firstName"
+      - "lastName"
+      - "image"
+      - "token"
+      - "LastLogin"
+    properties:
+      Id:
+        type: "string"
+      creationDate:
+        type: "string"
+      gender:
+        type: "string"
+      grade:
+        type: "integer"
+      SocialLink:
+        type: "string"
+      username:
+        type: "string"
+      displayName:
+        type: "string"
+      firstName:
+        type: "string"
+      lastNamee:
+        type: "string"
+      image:
+        type: "string"
+      token:
+        type: "string"
+      LastLogin:
+        type: "string"
+    
