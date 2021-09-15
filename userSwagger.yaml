@@ -46,14 +46,15 @@ paths:
           description: "Updated Fields"
           schema:
             type: "object"
-            required:
-              - "gender"
-              - "SocialLink"
             properties:
               gender:
                 type: "string"
                 enum: ["Male","Female"]
               SocialLink:
+                type: "string"
+              username:
+                type: "string"
+              displayName:
                 type: "string"
       responses:
         "200":

@@ -11,7 +11,6 @@ app.use(express.static("public"))
 const cors = require('cors')
 app.use(cors())
 const { verifyAuth } = require('./pauthorize')
-const { verifyToken } = require('./pauthorize')
 
 app.use(bodyParser.urlencoded({
     extended:true
@@ -68,9 +67,10 @@ MongoClient.connect(url,(err,db)=>{
 
             //only owner
             const user_id = String(req.params.user_id)
-            const p = req.body.password
             const g = (req.body.gender)
             const s = (req.body.SocialLink)
+            const d = (req.body.displayName)
+            const u = (req.body.username)
             dbo.collection('users').find({'Id':user_id}).toArray((err,result)=>{
                 if(result.length==1){
                     dbo.collection('users').find({'Id':user_id}).toArray((err,result)=>{
@@ -78,11 +78,14 @@ MongoClient.connect(url,(err,db)=>{
                         {
                             const u_obj={
                                 //password:(p==undefined)?result[0].password:p,
-                                gender:g,
-                                SocialLink:s
+                                displayName:(d==undefined)?result[0].displayName:d,
+                                username:(u==undefined)?result[0].username:u,
+                                gender:(g==undefined)?result[0].gender:g,
+                                SocialLink:(s==undefined)?result[0].SocialLink:s,
                             }
                             dbo.collection('users').updateOne({"Id":String(user_id)},{$set:u_obj},(err,result)=>{
-                                res.redirect(`/users/${user_id}`)
+                                res.send(result);
+                                //res.redirect(`/users/${user_id}`)
         
                             })
                       
@@ -237,6 +240,7 @@ MongoClient.connect(url,(err,db)=>{
         
                 console.log(response.payload);
                 const user_id=sub;
+                const Id=sub;
                 console.log(user_id);
                 //console.log(tokenId)
                 console.log(accessToken)
@@ -269,18 +273,13 @@ MongoClient.connect(url,(err,db)=>{
         
                             dbo.collection('users').insertOne(u_obj,(err,result)=>{
                                 if(err) throw err
-                                res.send("User " +email +" is added succesfully")
+                                if (res){res.send("User " +email +" is added succesfully")}
+                                else {res.send('Invalid User')}
                             })
                             dbo.collection('users').find({'Id':user_id}).toArray((err,result)=>{
                                 if(result.length == 1)
                                 {
-                                    //console.log(result[0])
-                                    //res.json(result[0])
-                                    res.json({
-                                        accessToken,
-                                        user_id
-                                    })
-                                    
+                                    res.json(result[0])
                                 }
                                 else
                                 {
@@ -301,12 +300,12 @@ MongoClient.connect(url,(err,db)=>{
                                 if (err) throw err
                                 else{console.log('success')}              
                             })
-                            //res.json(result[0])
-                            res.json({
+                            res.json(result[0])
+                            /*                             res.json({
                                 accessToken,
-                                user_id
+                                Id
                             })
-                        
+ */                        
                             
                         }
                     })
