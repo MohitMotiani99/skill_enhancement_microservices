@@ -22,7 +22,7 @@ module.exports = function validate_user(token,user_obj){
             },(err,response,body)=>{
                 if(err) throw err
                 body=JSON.parse(body)
-                if(body["sub"]==user_obj.Id)
+                if(body["user_id"]==user_obj.Id)
                 {
                     // eslint-disable-next-line no-console
                     console.log('yes')
