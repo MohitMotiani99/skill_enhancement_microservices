@@ -189,13 +189,54 @@ MongoClient.connect(url,function(err,db){
                 dbo.collection(userCollection).find({"token":token}).toArray(async function(err,result){
                     if (err) throw err
                     else if(result.length == 1 && (uv = await validate_user(token,result[0]))){
-                        dbo.collection(commentCollection).find({Id:id}).toArray(function(arr,result){
+                        const User = result[0]
+
+                        dbo.collection(commentCollection).find({Id:id}).toArray(async function(arr,result){
                             if(result.length==1){
-                                const score = result[0]["Score"]
-                                dbo.collection(commentCollection).updateOne({"Id":Number(id)},{$set:{"Score":score+1}},(err,result)=>{
+                                let amt,sts;
+                                const query_res = await dbo.collection('votes').find({'PostId':id,'UserId':User.Id,'PostTypeId':3}).toArray();
+                                const vote = 'upvote'
+                                if(query_res.length == 0){
+                                    amt=(vote=='upvote')?1:-1;
+                                    sts=amt;
+                                }
+                                else{
+                                    const doc = query_res[0];
+                                    if(doc.Status==1)
+                                    {
+                                        if(vote=='upvote')
+                                        {
+                                            await dbo.collection('votes').deleteOne({'PostId':id,'UserId':User.Id,'PostTypeId':3});
+                                            amt = -1;
+                                            sts=0;
+                                        }
+                                        else if(vote=='downvote'){
+                                            amt=-2;
+                                            sts=-1;
+                                        }
+                                    }
+                                    else if(doc.Status == -1)
+                                    {
+                                        if(vote=='downvote')
+                                        {
+                                            await dbo.collection('votes').deleteOne({'PostId':id,'UserId':User.Id,'PostTypeId':3});
+                                            amt = 1;
+                                            sts=0;
+                                        }
+                                        else if(vote=='upvote'){
+                                            amt=2;
+                                            sts=1;
+                                        }
+                                    }
+                                }
+
+                                if(sts!=0)
+                                    await dbo.collection('votes').updateOne({'PostId':id,'UserId':User.Id,'PostTypeId':3},{$set:{'Status':sts}},{upsert:true});
+
+                                dbo.collection(commentCollection).updateOne({"Id":Number(id)},{$inc:{"Score":amt}},(err,result)=>{
                                     if(err) throw err
                                     res.send("Reaction on Comment is captured")
-                                })
+                                })                            
                             }
                             else res.send('Invalid Comment Id')
                         })
@@ -215,10 +256,52 @@ MongoClient.connect(url,function(err,db){
                 dbo.collection(userCollection).find({"token":token}).toArray(async function(err,result){
                     if (err) throw err
                     else if(result.length == 1 && (uv = await validate_user(token,result[0]))){
-                        dbo.collection(commentCollection).find({Id:id}).toArray(function(arr,result){
+                        const User = result[0]
+
+                        dbo.collection(commentCollection).find({Id:id}).toArray(async function(arr,result){
                             if(result.length==1){
-                                const score = result[0]["Score"]
-                                dbo.collection(commentCollection).updateOne({"Id":Number(id)},{$set:{"Score":score-1}},(err,result)=>{
+                                let amt,sts;
+                                const vote = 'downvote'
+                                const query_res = await dbo.collection('votes').find({'PostId':id,'UserId':User.Id,'PostTypeId':3}).toArray();
+                                if(query_res.length == 0){
+                                    amt=(vote=='upvote')?1:-1;
+                                    sts=amt;
+                                }
+                                else{
+                                    const doc = query_res[0];
+                                    if(doc.Status==1)
+                                    {
+                                        if(vote=='upvote')
+                                        {
+                                            await dbo.collection('votes').deleteOne({'PostId':id,'UserId':User.Id,'PostTypeId':3});
+                                            amt = -1;
+                                            sts=0;
+                                        }
+                                        else if(vote=='downvote'){
+                                            amt=-2;
+                                            sts=-1;
+                                        }
+                                    }
+                                    else if(doc.Status == -1)
+                                    {
+                                        if(vote=='downvote')
+                                        {
+                                            await dbo.collection('votes').deleteOne({'PostId':id,'UserId':User.Id,'PostTypeId':3});
+                                            amt = 1;
+                                            sts=0;
+                                        }
+                                        else if(vote=='upvote'){
+                                            amt=2;
+                                            sts=1;
+                                        }
+                                    }
+                                }
+
+                                if(sts!=0)
+                                    await dbo.collection('votes').updateOne({'PostId':id,'UserId':User.Id,'PostTypeId':3},{$set:{'Status':sts}},{upsert:true});
+
+
+                                dbo.collection(commentCollection).updateOne({"Id":Number(id)},{$inc:{"Score":amt}},(err,result)=>{
                                     if(err) throw err
                                     res.send("Reaction on Comment is captured")
                                 })
