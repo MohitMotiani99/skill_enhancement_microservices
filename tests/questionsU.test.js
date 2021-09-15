@@ -84,6 +84,9 @@ afterEach(async ()=>{
     await dbo.collection(col_name_u).deleteMany({'username':'tester'})
     await dbo.collection(col_name_n).deleteMany({'UserId':901})
     await dbo.collection(col_name_n).deleteMany({'UserId':902})
+    await dbo.collection('votes').deleteMany({'UserId':901})
+    await dbo.collection('votes').deleteMany({'UserId':902})
+
 })
 
 
@@ -352,5 +355,79 @@ describe('Open Closed QUestion' ,()=>{
     })
     
 
+})
+
+describe('UpVote on a Upvoted Question',()=>{
+    beforeEach(async ()=>{
+        await dbo.collection('votes').insertOne({'UserId':902,'PostId':9999,'PostTypeId':1,'Status':1})
+    })
+    test('GET /questions/:question_id/:vote', async () => {
+        const question_id = 9999
+        const vote = 'upvote'
+        await supertest(app).get(`/questions/${question_id}/${vote}`)
+            .set({'x-access-token':'t2'})
+            .expect(302)
+            .then(async (res)=>{
+                const recieved = await dbo.collection('votes').find({'UserId':902,'PostId':9999,'PostTypeId':1}).toArray()
+                expect(recieved.length).toBe(0)
+            })
+    })
+    
+})
+
+describe('UpVote on a Downvoted Question',()=>{
+    beforeEach(async ()=>{
+        await dbo.collection('votes').insertOne({'UserId':902,'PostId':9999,'PostTypeId':1,'Status':-1})
+    })
+    test('GET /questions/:question_id/:vote', async () => {
+        const question_id = 9999
+        const vote = 'upvote'
+        await supertest(app).get(`/questions/${question_id}/${vote}`)
+            .set({'x-access-token':'t2'})
+            .expect(302)
+            .then(async (res)=>{
+                const recieved = await dbo.collection('votes').find({'UserId':902,'PostId':9999,'PostTypeId':1}).toArray()
+                expect(recieved.length).toBe(1)
+                expect(recieved[0].Status).toBe(1)
+            })
+    })
+    
+})
+
+describe('DownVote on a Downvoted Question',()=>{
+    beforeEach(async ()=>{
+        await dbo.collection('votes').insertOne({'UserId':902,'PostId':9999,'PostTypeId':1,'Status':-1})
+    })
+    test('GET /questions/:question_id/:vote', async () => {
+        const question_id = 9999
+        const vote = 'downvote'
+        await supertest(app).get(`/questions/${question_id}/${vote}`)
+            .set({'x-access-token':'t2'})
+            .expect(302)
+            .then(async (res)=>{
+                const recieved = await dbo.collection('votes').find({'UserId':902,'PostId':9999,'PostTypeId':1}).toArray()
+                expect(recieved.length).toBe(0)
+            })
+    })
+    
+})
+
+describe('DownVote on a Upvoted Question',()=>{
+    beforeEach(async ()=>{
+        await dbo.collection('votes').insertOne({'UserId':902,'PostId':9999,'PostTypeId':1,'Status':1})
+    })
+    test('GET /questions/:question_id/:vote', async () => {
+        const question_id = 9999
+        const vote = 'downvote'
+        await supertest(app).get(`/questions/${question_id}/${vote}`)
+            .set({'x-access-token':'t2'})
+            .expect(302)
+            .then(async (res)=>{
+                const recieved = await dbo.collection('votes').find({'UserId':902,'PostId':9999,'PostTypeId':1}).toArray()
+                expect(recieved.length).toBe(1)
+                expect(recieved[0].Status).toBe(-1)
+            })
+    })
+    
 })
 

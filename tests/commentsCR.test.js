@@ -213,4 +213,13 @@ test('POST /questions/:id/comments/add', async () => {
         })
 })  
 
+test('GET /questions/:id/comments', async () => {
+    const id = 9999
+    await supertest(app).get(`/questions/${id}/comments`)
+        .expect(200)
+        .then(async (res)=>{
+            expect(res.body.length).toBe(1)
+        })
+})
+
 

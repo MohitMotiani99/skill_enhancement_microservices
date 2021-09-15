@@ -175,13 +175,13 @@ test('PATCH /users/:user_id/editprofile', async () => {
         .set({'content-type':'application/json'})
         .set({'x-access-token':'t3'})
         .send(edits)
-        .expect(302)
+        .expect(200)
         .then(async (res)=>{
-            expect(res.headers.location).toBe(`/users/${user_id}`)
-            let recieved = dbo.collection(col_name_u).find({'Id':user_id}).toArray()
+            let recieved = await dbo.collection(col_name_u).find({'Id':user_id}).toArray()
             // console.log(recieved)
             recieved = recieved[0]
-
+            expect(recieved.gender).toBe(edits.gender)
+            expect(recieved.SocialLink).toBe(edits.SocialLink)
         })
 })
 

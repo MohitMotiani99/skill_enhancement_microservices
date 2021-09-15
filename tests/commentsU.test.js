@@ -328,3 +328,77 @@ test('POST /comments/:id/edit', async () => {
         })
 
 })
+
+describe('UpVote on a Upvoted Comment',()=>{
+    beforeEach(async ()=>{
+        await dbo.collection('votes').insertOne({'UserId':902,'PostId':9997,'PostTypeId':3,'Status':1})
+    })
+    test('PATCH /comments/:id/upvote', async () => {
+        const id = 9997
+        await supertest(app).patch(`/comments/${id}/upvote`)
+            .set({'x-access-token':'t2'})
+            .expect(200)
+            .then(async (res)=>{
+                expect(res.text).toBe('Reaction on Comment is captured')
+                const recieved = await dbo.collection('votes').find({'UserId':902,'PostId':9997,'PostTypeId':3}).toArray()
+                expect(recieved.length).toBe(0)
+            })
+    })
+    
+})
+
+describe('UpVote on a Downvoted Comment',()=>{
+    beforeEach(async ()=>{
+        await dbo.collection('votes').insertOne({'UserId':902,'PostId':9997,'PostTypeId':3,'Status':-1})
+    })
+    test('PATCH /comments/:id/upvote', async () => {
+        const id = 9997
+        await supertest(app).patch(`/comments/${id}/upvote`)
+            .set({'x-access-token':'t2'})
+            .expect(200)
+            .then(async (res)=>{
+                expect(res.text).toBe('Reaction on Comment is captured')
+                const recieved = await dbo.collection('votes').find({'UserId':902,'PostId':9997,'PostTypeId':3}).toArray()
+                expect(recieved.length).toBe(1)
+                expect(recieved[0].Status).toBe(1)
+            })
+    })
+    
+})
+
+describe('DownVote on a Downvoted Comment',()=>{
+    beforeEach(async ()=>{
+        await dbo.collection('votes').insertOne({'UserId':902,'PostId':9997,'PostTypeId':3,'Status':-1})
+    })
+    test('PATCH /comments/:id/downvote', async () => {
+        const id = 9997
+        await supertest(app).patch(`/comments/${id}/downvote`)
+            .set({'x-access-token':'t2'})
+            .expect(200)
+            .then(async (res)=>{
+                expect(res.text).toBe('Reaction on Comment is captured')
+                const recieved = await dbo.collection('votes').find({'UserId':902,'PostId':9997,'PostTypeId':3}).toArray()
+                expect(recieved.length).toBe(0)
+            })
+    })
+    
+})
+
+describe('DownVote on a Upvoted Comment',()=>{
+    beforeEach(async ()=>{
+        await dbo.collection('votes').insertOne({'UserId':902,'PostId':9997,'PostTypeId':3,'Status':1})
+    })
+    test('PATCH /comments/:id/downvote', async () => {
+        const id = 9997
+        await supertest(app).patch(`/comments/${id}/downvote`)
+            .set({'x-access-token':'t2'})
+            .expect(200)
+            .then(async (res)=>{
+                expect(res.text).toBe('Reaction on Comment is captured')
+                const recieved = await dbo.collection('votes').find({'UserId':902,'PostId':9997,'PostTypeId':3}).toArray()
+                expect(recieved.length).toBe(1)
+                expect(recieved[0].Status).toBe(-1)
+            })
+    })
+    
+})
