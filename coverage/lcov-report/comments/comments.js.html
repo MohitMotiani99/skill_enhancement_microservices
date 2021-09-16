@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.06% </span>
+                <span class="strong">83.74% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>174/207</span>
+                <span class='fraction'>170/203</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.66% </span>
+                <span class="strong">89.29% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>26/29</span>
+                <span class='fraction'>25/28</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.36% </span>
+                <span class="strong">88.11% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>167/189</span>
+                <span class='fraction'>163/185</span>
             </div>
         
             
@@ -390,12 +390,7 @@
 <a name='L331'></a><a href='#L331'>331</a>
 <a name='L332'></a><a href='#L332'>332</a>
 <a name='L333'></a><a href='#L333'>333</a>
-<a name='L334'></a><a href='#L334'>334</a>
-<a name='L335'></a><a href='#L335'>335</a>
-<a name='L336'></a><a href='#L336'>336</a>
-<a name='L337'></a><a href='#L337'>337</a>
-<a name='L338'></a><a href='#L338'>338</a>
-<a name='L339'></a><a href='#L339'>339</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<a name='L334'></a><a href='#L334'>334</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -421,13 +416,6 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">31x</span>
-<span class="cline-any cline-yes">31x</span>
-<span class="cline-any cline-yes">31x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -594,6 +582,7 @@
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -703,16 +692,17 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -761,13 +751,6 @@ app.use(
     swaggerUi.serve, 
     swaggerUi.setup(swaggerDocument)
 );
-&nbsp;
-app.use((req, res, next) =&gt; {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, x-access-token");
-    next();
-});
-&nbsp;
 &nbsp;
 require('dotenv').config()
 &nbsp;
@@ -932,6 +915,7 @@ MongoClient.connect(url,function(err,db){
                     <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >throw err</span>
                     else if(result.length == 1 &amp;&amp; (uv = await validate_user(token,result[0]))){
                         const User = result[0]
+&nbsp;
                         dbo.collection(commentCollection).find({Id:id}).toArray(async function(arr,result){
                             if(result.length==1){
                                 let amt,sts;
@@ -977,7 +961,7 @@ MongoClient.connect(url,function(err,db){
                                 dbo.collection(commentCollection).updateOne({"Id":Number(id)},{$inc:{"Score":amt}},(err,result)=&gt;{
                                     <span class="missing-if-branch" title="if path not taken" >I</span>if(err) <span class="cstat-no" title="statement not covered" >throw err</span>
                                     res.send("Reaction on Comment is captured")
-                                })
+                                })                            
                             }
                             else res.send('Invalid Comment Id')
                         })
@@ -1002,8 +986,8 @@ MongoClient.connect(url,function(err,db){
                         dbo.collection(commentCollection).find({Id:id}).toArray(async function(arr,result){
                             <span class="missing-if-branch" title="else path not taken" >E</span>if(result.length==1){
                                 let amt,sts;
-                                const query_res = await dbo.collection('votes').find({'PostId':id,'UserId':User.Id,'PostTypeId':3}).toArray();
                                 const vote = 'downvote'
+                                const query_res = await dbo.collection('votes').find({'PostId':id,'UserId':User.Id,'PostTypeId':3}).toArray();
                                 if(query_res.length == 0){
                                     amt=(vote=='upvote')?<span class="branch-0 cbranch-no" title="branch not covered" >1:</span>-1;
                                     sts=amt;
@@ -1041,11 +1025,11 @@ MongoClient.connect(url,function(err,db){
                                 if(sts!=0)
                                     await dbo.collection('votes').updateOne({'PostId':id,'UserId':User.Id,'PostTypeId':3},{$set:{'Status':sts}},{upsert:true});
 &nbsp;
+&nbsp;
                                 dbo.collection(commentCollection).updateOne({"Id":Number(id)},{$inc:{"Score":amt}},(err,result)=&gt;{
                                     <span class="missing-if-branch" title="if path not taken" >I</span>if(err) <span class="cstat-no" title="statement not covered" >throw err</span>
                                     res.send("Reaction on Comment is captured")
                                 })
-&nbsp;
                             }
                             else <span class="cstat-no" title="statement not covered" >res.send('Invalid Comment Id')</span>
                         })
@@ -1055,6 +1039,7 @@ MongoClient.connect(url,function(err,db){
             }
         })
 &nbsp;
+        //change for commit
         //Get the comments posted by the users identified id
         app.get(["/users/:id/comments"],<span class="fstat-no" title="function not covered" >(r</span>eq,res)=&gt;{
             const id = <span class="cstat-no" title="statement not covered" >Number(req.params["id"])</span>
@@ -1078,7 +1063,7 @@ module.exports = app</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Wed Sep 15 2021 12:35:14 GMT+0530 (India Standard Time)
+                at Thu Sep 16 2021 09:02:14 GMT+0530 (India Standard Time)
             </div>
         </div>
         <script src="../prettify.js"></script>
