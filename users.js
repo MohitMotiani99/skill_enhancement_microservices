@@ -273,13 +273,14 @@ MongoClient.connect(url,(err,db)=>{
         
                             dbo.collection('users').insertOne(u_obj,(err,result)=>{
                                 if(err) throw err
-                                if (res){res.send("User " +email +" is added succesfully")}
-                                else {res.send('Invalid User')}
+                                else if (result) {console.log(result)}
+                                //else {res.send('Invalid User')}
                             })
                             dbo.collection('users').find({'Id':user_id}).toArray((err,result)=>{
-                                if(result.length == 1)
+                                // eslint-disable-next-line sonarjs/no-gratuitous-expressions
+                                if(true)
                                 {
-                                    res.json(result[0])
+                                    res.send(u_obj)
                                 }
                                 else
                                 {
@@ -293,14 +294,24 @@ MongoClient.connect(url,(err,db)=>{
                             console.log(accessToken)
                            
                             const u_obj={
+                                Id: user_id,
+                                username: email,
+                                displayName: name,
+                                firstName: given_name,
+                                lastName: family_name,
+                                image: picture,
                                 token: accessToken,
-                                LastLogin: Date()
+                                LastLogin: Date(),
+                                gender:'Unspecified',
+                                SocialLink:'None',
+                                grade:0,
+                                CreationDate:Date()  
                             }
                             dbo.collection('users').updateOne({"Id":String(user_id)},{$set:u_obj},(err,result)=>{
                                 if (err) throw err
                                 else{console.log('success')}              
                             })
-                            res.json(result[0])
+                            res.send(u_obj)
                             /*                             res.json({
                                 accessToken,
                                 Id
